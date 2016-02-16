@@ -71,12 +71,12 @@ else
 }
 Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 
-& easy_install -U pip
-& pip install -U wmi
-& pip install -U virtualenv
-& pip install -U setuptools
-& pip install -U distribute
-& pip install cffi
+Exec-EasyInstall -Upgrade pip
+Exec-PipInstall -upgrade wmi
+Exec-PipInstall -upgrade virtualenv
+Exec-PipInstall -upgrade setuptools
+Exec-PipInstall -upgrade distribute
+Exec-PipInstall cffi
 
 popd
 
@@ -132,8 +132,8 @@ if (!(Test-Path $lockPath)){
 	mkdir $lockPath
 }
 
-pip install networkx
-pip install futures
+Exec-PipInstall networkx
+Exec-PipInstall futures
 
 # TODO: remove this after the clone volume bug is fixed
 $windows_utils = "$openstackDir\cinder\cinder\volume\drivers\windows\windows.py"
@@ -141,7 +141,7 @@ $content = gc $windows_utils
 sc $windows_utils $content.Replace("self.create_volume(volume)", "self.create_volume(volume);os.unlink(self.local_path(volume))")
 pushd $openstackDir\cinder
 
-pip install -r requirements.txt
+Exec-PipInstall -r requirements.txt
 
 # Revert the driver disable patch
 git config --global user.email "microsoft_cinder_ci@microsoft.com"
@@ -209,12 +209,12 @@ Write-Host "Service Details:"
 $filter = 'Name=' + "'" + $serviceName + "'" + ''
 Get-WMIObject -namespace "root\cimv2" -class Win32_Service -Filter $filter | Select *
 
-& pip install -U "Jinja2>=2.6"
-pip install python-novaclient==2.28.1
+Exec-PipInstall -upgrade "Jinja2>=2.6"
+Exec-PipInstall python-novaclient==2.28.1
 #Fix for bug in monotonic pip package
 #(Get-Content "C:\Python27\Lib\site-packages\monotonic.py") | foreach-object {$_ -replace ">= 0", "> 0"} | Set-Content  "C:\Python27\Lib\site-packages\monotonic.py"
 
-#pip install decorator==3.4.2
+#Exec-PipInstall decorator==3.4.2
 # Fix for the __qualname__ attribute issue appended to decorated methods, impacting osprofiler
 # TODO(lpetrut): send a fix for the latest decorator lib
 
